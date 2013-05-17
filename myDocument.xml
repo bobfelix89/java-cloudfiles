@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<auth xmlns="http://docs.openstack.org/identity/api/v2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" tenantName="service">
+<passwordCredentials password="gtpwd" username="gtuser"/>
+</auth>

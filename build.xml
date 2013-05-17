@@ -1,176 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="java-cloudfiles" default="compile" basedir=".">
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+<project name="dkocher" default="default" basedir=".">
+    <description>Builds, tests, and runs the project dkocher.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <!--
 
-    <description>
-                Builds CloudFiles Java Library and example apps.
-	</description>
- 
-    <!-- =============================================================== -->
-	<!-- Set project properties for folder locations                     -->
-    <!-- =============================================================== -->
-    <property name="project.name" value="java-cloudfiles"/>
-    
-    <!-- Allow overrides to the properties set here -->
-    <property file="local.properties" />
-	<property name="src" location="src/main/java"/>
-	<property name="test-src" location="src/test/java"/>
-	<property name="test-resource" location="src/test/resources"/>
-	<property name="lib" location="lib"/>
-	<property name="dist" location="dist"/>
-	<property name="classes" location="classes"/>
-	<property name="doc-dir" location="docs" />
-	<property name="pkg-dir" location="cloudfiles" />
-	<property name="report.dir" location="testreport" />
+    There exist several targets which are by default empty and which can be 
+    used for execution of your tasks. These targets are usually executed 
+    before and after some main targets. They are: 
+
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before javac compilation
+      -post-compile:             called after javac compilation
+      -pre-compile-single:       called before javac compilation of single file
+      -post-compile-single:      called after javac compilation of single file
+      -pre-compile-test:         called before javac compilation of JUnit tests
+      -post-compile-test:        called after javac compilation of JUnit tests
+      -pre-compile-test-single:  called before javac compilation of single JUnit test
+      -post-compile-test-single: called after javac compilation of single JUunit test
+      -pre-jar:                  called before JAR building
+      -post-jar:                 called after JAR building
+      -post-clean:               called after cleaning build products
+
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported 
+    nbproject/build-impl.xml file. 
 
 
- 	<path id="base.path">
-		<pathelement location="${classes}"/>
-		<fileset dir="${lib}">
-			<include name="**/*.jar"/>
-		</fileset>
-	</path>
- 
-	<!-- =============================================================== -->
-	<!-- Create a time stamp and needed directories                      -->
-	<!-- =============================================================== -->
-	<target name="init">
+    Another way to customize the build is by overriding existing main targets.
+    The targets of interest are: 
 
-		<echo>-------------------------------------------------</echo>
-		<echo>           Building Cloudfiles                   </echo>
-		<echo>-------------------------------------------------</echo>
+      -init-macrodef-javac:     defines macro for javac compilation
+      -init-macrodef-junit:     defines macro for junit execution
+      -init-macrodef-debug:     defines macro for class debugging
+      -init-macrodef-java:      defines macro for class execution
+      -do-jar-with-manifest:    JAR building (if you are using a manifest)
+      -do-jar-without-manifest: JAR building (if you are not using a manifest)
+      run:                      execution of project 
+      -javadoc-build:           Javadoc generation
+      test-report:              JUnit report generation
 
-		<!-- Create time stamp -->
-		<tstamp/>
+    An example of overriding the target for project execution could look like this:
 
-		<!-- Create the build directory structure used by compile -->
-		<mkdir dir="${classes}"/>
-		<mkdir dir="${dist}"/>
-		</target>
+        <target name="run" depends="dkocher-impl.jar">
+            <exec dir="bin" executable="launcher.exe">
+                <arg file="${dist.jar}"/>
+            </exec>
+        </target>
 
-	<!-- =============================================================== -->
-	<!-- Compile the project sources                                     -->
-	<!-- =============================================================== -->
-	<target name="compile" depends="init" description="Compiles source" >
+    Notice that the overridden target depends on the jar target and not only on 
+    the compile target as the regular run target does. Again, for a list of available 
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file. 
 
-		<echo>Compiling the source</echo>
-
-		<javac destdir="${classes}"
-			optimize="off"
-			debug="on"
- 			source="1.5" target="1.5"
-			failonerror="true"
-			srcdir="${src}">
-			<classpath>
-				<path refid="base.path"/>
-			</classpath>
-			<include name="**"/>
-		</javac>
-		<copy file="${src}/com/rackspacecloud/client/cloudfiles/MIME.types" 
-		      todir="${classes}/com/rackspacecloud/client/cloudfiles" />
-		<jar jarfile="${dist}/${project.name}.jar" basedir="${classes}"/>
-	</target>
-
-	<target name="compile-test" depends="compile" description="Compiles Test Code" >
-		<echo>Compiling the test source</echo>
-		<javac destdir="${classes}"
-			optimize="off"
-			debug="on"
-			failonerror="true"
-			srcdir="${test-src}">
-			<classpath>
-				<path refid="base.path"/>
-			</classpath>
-			<include name="**"/>
-		</javac>
-		<copy todir="${classes}">
-			<fileset dir="${test-resource}" />
-		</copy>
-		<jar jarfile="${dist}/${project.name}-test.jar" basedir="${classes}"/>
-	</target>
-
-	<target name="test" depends="compile-test">
-	  <junit printsummary="yes" >
-	    <classpath refid="base.path" />
-	    <formatter type="brief" usefile="false" />
-            <test name="com.rackspacecloud.client.cloudfiles.FilesClientTestCase" />
-	  </junit>
-	</target>
-	
-	<target name="test-report" depends="compile-test">
-	  <mkdir dir="${report.dir}"/>
-	  <junit>
-	    <classpath refid="base.path" />
-	    <formatter type="xml" />
-            <test name="com.rackspacecloud.client.cloudfiles.FilesClientTestCase" todir="${report.dir}" />
-	  </junit>
-	  <junitreport todir="${report.dir}">
-	    <fileset dir="${report.dir}" includes="TEST-*.xml"/>
-	    <report todir="${report.dir}"/>
-	  </junitreport>
-      </target>
-
-	
-	<!-- =============================================================== -->
-	<!-- Package things up, leaving out test files                       -->
-	<!-- =============================================================== -->
-	<target name="package" description="Package files" depends="clean,compile,docs">
-		<delete dir="${pkg-dir}"/>
-		<mkdir dir="${pkg-dir}" />	
-		<mkdir dir="${pkg-dir}/lib" />	
-		<mkdir dir="${pkg-dir}/dist" />	
-		
-		<copy todir="${pkg-dir}/lib" >
-			<fileset dir="${lib}" />
-		</copy>		
-		<copy todir="${pkg-dir}/dist">
-			<fileset dir="${dist}" />
-		</copy>		
-		<copy todir="${pkg-dir}/docs" >
-			<fileset dir="${doc-dir}" />
-		</copy>		
-		<copy file="cloudfiles.bat" todir="${pkg-dir}" />
-                <copy file="cloudfiles.sh" todir="${pkg-dir}" />
-		<copy file="cloudfiles.properties" todir="${pkg-dir}" />
-		<copy file="log4j.properties" todir="${pkg-dir}" />
-		<copy file="COPYING" todir="${pkg-dir}" />
-	
-		<tar destfile="java-cloudfiles-binary.tar.gz" compression="gzip">
-			<tarfileset dir="${pkg-dir}" prefix="cloudfiles/" />
-		</tar>	
-		
-		<!-- Source version  -->
-		<copy file="build.xml" todir="${pkg-dir}" />
-		<mkdir dir="${pkg-dir}/src/main/java" />
-		<copy todir="${pkg-dir}/src/main/java" >
-			<fileset dir="${src}" />
-		</copy>		
-		<tar destfile="java-cloudfiles-source.tar.gz" compression="gzip">
-			<tarfileset dir="${pkg-dir}" prefix="cloudfiles/" />
-		</tar>			
-	</target>
-	
-	<!-- =============================================================== -->
-	<!-- Create the JavaDoc HTML Files                                   -->
-	<!-- =============================================================== -->
-	<target name="docs" description="Create javadocs">
-		<javadoc sourcepath="${src}" destdir="${doc-dir}">
-			<classpath>
-				<path refid="base.path"/>
-			</classpath>
-		</javadoc>
-	</target>
-		
-	
-	<!-- =============================================================== -->
-	<!-- Delete the folders we create                                    -->
-	<!-- =============================================================== -->
-	<target name="clean" description="clean up">
-
-		<delete dir="${classes}"/>
-		<delete dir="${dist}"/>
-		<delete dir="${docdir}" />
-
-	</target>
-        
-        
+    -->
 </project>
