@@ -3,7 +3,7 @@
  */ 
 
 package com.rackspacecloud.client.cloudfiles;
-
+import javax.xml.parsers.DocumentBuilder;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -68,6 +68,7 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 import com.rackspacecloud.client.cloudfiles.wrapper.RequestEntityWrapper;
+
 
 /**
  * 
@@ -305,7 +306,9 @@ public class FilesClient
     /** 
      * To construct json string.
      */
-    private String getJSONBody() {
+   
+    
+    private String getJSONBody(){
         String[] tempArr = username.split(":");
         String userName, tenantName;
         userName = tempArr[0];
@@ -315,6 +318,7 @@ public class FilesClient
             JSONObject passwordCredentials = new JSONObject();
             passwordCredentials.put("username", userName);
             passwordCredentials.put("password", password);
+        
             JSONObject auth = new JSONObject();
             auth.put("passwordCredentials", passwordCredentials);
             auth.put("tenantName", tenantName);
@@ -325,7 +329,10 @@ public class FilesClient
         } catch (JSONException ex) {
             logger.error("Error when construction authentication body.");
         }
-
+            /*
+             * Saída de dados:
+             * {"auth":{"passwordCredentials":{"username":"gtuser","password":"gtpwd"},"tenantName":"service"}}
+             */
  
         return null;
     }
