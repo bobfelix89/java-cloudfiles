@@ -2,12 +2,13 @@ package com.rackspacecloud.client.cloudfiles;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 
 import org.apache.http.HttpException;
 
-import com.rackspacecloud.client.cloudfiles.FilesClient;
+import com.rackspacecloud.client.cloudfiles.*;
 
 public class testeCliente {
 	public static void main (String args[])  throws HttpException, IOException{
@@ -25,8 +26,13 @@ public class testeCliente {
 			        JFileChooser fc = new JFileChooser();
 			        fc.showOpenDialog(null);
 			        input = fc.getSelectedFile();
-			        String fileName = "TesteArquivo";
-					
+			        String fileName = fc.getName(input);
+
+	List<FilesContainer> containers = client.listContainers();
+	for (FilesContainer cont : containers){
+		System.out.println("Container: " + cont.getName());
+	}
+
 			        if(client.containerExists(containerName)){
 			        	client.storeObjectAs(containerName, input,"application/octet-stream", fileName);	
 			        }
